@@ -1,4 +1,6 @@
 Fork of: https://github.com/DanielMeixner/DebugContainer
+Blogpost about this Version: https://www.thomas-zuehlke.de/2019/08/debug-container-for-simple-tests-analyzing/
+Image on Docker-Hub: https://hub.docker.com/r/tzuehlke/dbgc
 
 Parameters:
 * COLOR: sets background color for call /. Example: green

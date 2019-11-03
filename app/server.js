@@ -118,7 +118,8 @@ app.get('/', function (req, res) {
 	
 	res.writeHead(statuscode, { 'Content-Type': 'text/html' });
     res.end('<html><body bgcolor='+ config.color + '><h1>DebugContainer - '+ statuscode +'</h1>' +
-        "<p>Make sure you started this container as described <a href=\"https://github.com/DanielMeixner/DebugContainer\">here</a>. </p>" +
+        "<p>Make sure you started this container as described in the <a href=\"https://www.thomas-zuehlke.de/2019/08/debug-container-for-simple-tests-analyzing/\">blog post</a>. </p>" +
+		"<p>You can take a look at the <a href=\"https://github.com/tzuehlke/DebugContainer\">source</a>. </p>" +
         "<p>You can start this container multiple times locally. Make sure you provide your docker bridge gateway IP as CASCADECONFIG.</p>"+
         
         "<p>Get <a href=\"/api/cascade\">/api/cascade</a> to randomly call:</p>" +

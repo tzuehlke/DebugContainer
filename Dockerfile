@@ -1,4 +1,3 @@
-#docker run -it -p 22:2222 -p 8080:80 -e COLOR=red nodessh
 FROM node:11.15.0-stretch-slim
 
 # ssh
