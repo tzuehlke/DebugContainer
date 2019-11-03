@@ -1,0 +1,187 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dbg-container
+  labels:
+    istio-injection: enabled
+---
+#docker run -p 8080:80 -e COLOR=green -e CASCADECONFIG='[{"ip":"172.17.0.4","port":"80","path":"/api/cascade"}]' tzuehlke/dbgc
+apiVersion: v1
+kind: Service
+metadata:
+  name: green
+  namespace: dbg-container
+spec:
+  selector:
+    app: green-dbg
+  type: LoadBalancer
+  ports:
+   - port: 80
+     name: http
+     targetPort: 80
+     protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greendpl
+  namespace: dbg-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: green-dbg
+  template:
+    metadata:
+      labels:
+        app: green-dbg
+    spec:
+      containers:
+      - name: green-cont
+        image: tzuehlke/dbgc:latest
+        ports:
+          - containerPort: 80
+            name: http         
+            protocol: TCP
+        env:
+          - name: "COLOR"
+            value: "green"
+          - name: "CASCADECONFIG"
+            value: '[{"ip":"yellow","port":"80","path":"/api/cascade"}]'
+---
+#docker run -p 8081:80 -e COLOR=yellow -e CASCADECONFIG='[{"ip":"172.17.0.2","port":"80","path":"/"},{"ip":"172.17.0.3", "port":"80", "path":"/ping"}]' tzuehlke/dbgc
+apiVersion: v1
+kind: Service
+metadata:
+  name: yellow
+  namespace: dbg-container
+spec:
+  selector:
+    app: yellow-dbg
+  type: ClusterIP
+  ports:
+   - port: 80
+     name: http
+     targetPort: 80
+     protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yellowdpl
+  namespace: dbg-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yellow-dbg
+  template:
+    metadata:
+      labels:
+        app: yellow-dbg
+    spec:
+      containers:
+      - name: yellow-cont
+        image: tzuehlke/dbgc:latest
+        ports:
+          - containerPort: 80
+            name: http         
+            protocol: TCP
+        env:
+          - name: "COLOR"
+            value: "yellow"
+          - name: "CASCADECONFIG"
+            value: '[{"ip":"red","port":"80","path":"/"},{"ip":"tomato", "port":"80", "path":"/ping"}]'
+---
+#docker run -p 8082:80 -e COLOR=tomato -e ERRORRATE=8 -e ERRORCODE=404 tzuehlke/dbgc
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomato
+  namespace: dbg-container
+spec:
+  selector:
+    app: tomato-dbg
+  type: ClusterIP
+  ports:
+   - port: 80
+     name: http
+     targetPort: 80
+     protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomatodpl
+  namespace: dbg-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tomato-dbg
+  template:
+    metadata:
+      labels:
+        app: tomato-dbg
+    spec:
+      containers:
+      - name: tomato-cont
+        image: tzuehlke/dbgc:latest
+        ports:
+          - containerPort: 80
+            name: http         
+            protocol: TCP
+        env:
+          - name: "COLOR"
+            value: "tomato"
+          - name: "ERRORRATE"
+            value: "8"              
+          - name: "ERRORCODE"
+            value: "404"
+---
+#docker run -p 8083:80 -e COLOR=red -e ERRORRATE=4 -e ERRORCODE=405 tzuehlke/dbgc
+apiVersion: v1
+kind: Service
+metadata:
+  name: red
+  namespace: dbg-container
+spec:
+  selector:
+    app: red-dbg
+  type: ClusterIP
+  ports:
+   - port: 80
+     name: http
+     targetPort: 80
+     protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reddpl
+  namespace: dbg-container
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: red-dbg
+  template:
+    metadata:
+      labels:
+        app: red-dbg
+    spec:
+      containers:
+      - name: red-cont
+        image: tzuehlke/dbgc:latest
+        ports:
+          - containerPort: 80
+            name: http         
+            protocol: TCP
+        env:
+          - name: "COLOR"
+            value: "red"
+          - name: "ERRORRATE"
+            value: "4"
+          - name: "ERRORCODE"
+            value: "405"
